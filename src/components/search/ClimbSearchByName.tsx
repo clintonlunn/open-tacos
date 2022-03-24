@@ -3,9 +3,15 @@ import { useRouter } from 'next/router'
 import { typesenseSearch } from '../../js/typesense/TypesenseClient'
 import { Autocomplete } from './Autocomplete'
 import { SearchByNameTemplate } from './ResultTemplates'
+import { debounced } from '../../js/utils'
 
 export const ClimbSearchByName = ({ isMobile = true, placeholder = 'Try \'Levitation 29\', \'technical crimpy\', or \'Lynn Hill\'' }: {isMobile?: boolean, placeholder?: string}): JSX.Element => {
   const router = useRouter()
+
+  interface SourceItemsProps {
+    grouped_hits: object[]
+  }
+
   useEffect(() => {
     if (isMobile) return
     const inputs = document.getElementsByClassName('aa-Input')
@@ -18,7 +24,8 @@ export const ClimbSearchByName = ({ isMobile = true, placeholder = 'Try \'Levita
       placeholder={placeholder}
       classNames={{ item: 'name-search-item', panel: 'name-search-panel' }}
       getSources={async ({ query }) => {
-        const items = await typesenseSearch(query)
+        const items: any = await debounced(typesenseSearch(query))
+        console.log(items)
         return [{
           sourceId: 'climbs',
           getItems: () => items.grouped_hits,

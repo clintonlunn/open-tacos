@@ -118,3 +118,38 @@ export const getSlug = (areaId: string, isLeaf: boolean): string => {
   const type = isLeaf ? 'crag' : 'areas'
   return `/${type}/${areaId}`
 }
+
+const debouncePromise = (fn: Function, time: number) => {
+  let timerId
+
+  return async function debounced (...args) {
+    if (timerId) {
+      clearTimeout(timerId)
+    }
+
+    return await new Promise((resolve) => {
+      timerId = setTimeout(() => resolve(fn(...args)), time)
+    })
+  }
+}
+
+export const debounced = debouncePromise(async (items) => await Promise.resolve(items), 1000)
+
+export const throttleRequest = (func, wait) => {
+  let lastTime = 0
+
+  return (...args) => {
+    const now = Date.now()
+
+    if (now - lastTime >= wait) {
+      func(...args)
+
+      lastTime = now
+    }
+  }
+}
+
+// throttle usage example
+// throttleRequest((e) => {
+//   console.log('send the request')
+// }, 1000)

@@ -5,6 +5,8 @@ import ClientOnly from '../../components/ClientOnly'
 import { Autocomplete } from './Autocomplete'
 import { geocoderLookup } from '../../js/mapbox/Client'
 import { PlaceTemplate, resultItemToUrl } from './CragFinderTemplates'
+// import { useDebounce } from '../../js/hooks/useDebounce'
+import { debounced } from '../../js/utils'
 
 const SEARCH_OPTIONS = {
   country: 'US',
@@ -33,7 +35,7 @@ const CragFinder = ({ isMobile = true, placeholder = 'Try \'Smith Rock\', \'Las 
         if ((query as string).length < 3) {
           return []
         }
-        const features = await geocoderLookup(query, SEARCH_OPTIONS)
+        const features = await debounced(geocoderLookup(query, SEARCH_OPTIONS))
         return [{
           sourceId: 'location',
           getItems: () => features,
