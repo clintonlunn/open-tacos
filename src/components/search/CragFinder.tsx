@@ -21,10 +21,10 @@ const CragFinder = ({ isMobile = true, placeholder = 'Try \'Smith Rock\', \'Las 
   const router = useRouter()
   useEffect(() => {
     if (isMobile) return
-    const inputs = document.getElementsByClassName('aa-Input')
-    for (let i = 0; i < inputs.length; i++) {
-      (inputs[i] as HTMLElement).focus()
-    }
+    // const inputs = document.getElementsByClassName('aa-Input')
+    // for (let i = 0; i < inputs.length; i++) {
+    //   (inputs[i] as HTMLElement).focus()
+    // }
   })
   return (
     <Autocomplete

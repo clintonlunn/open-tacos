@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { typesenseSearch } from '../../js/typesense/TypesenseClient'
 import { Autocomplete } from './Autocomplete'
@@ -15,17 +15,17 @@ export const ClimbSearchByName = ({ isMobile = true, placeholder = 'Try \'Levita
   useEffect(() => {
     if (isMobile) return
     const inputs = document.getElementsByClassName('aa-Input')
-    for (let i = 0; i < inputs.length; i++) {
-      (inputs[i] as HTMLElement).focus()
-    }
+    // for (let i = 0; i < inputs.length; i++) {
+    //   (inputs[i] as HTMLElement).focus()
+    // }
   })
+
   return (
     <Autocomplete
       placeholder={placeholder}
       classNames={{ item: 'name-search-item', panel: 'name-search-panel' }}
       getSources={async ({ query }) => {
         const items: any = await debounced(typesenseSearch(query))
-        console.log(items)
         return [{
           sourceId: 'climbs',
           getItems: () => items.grouped_hits,

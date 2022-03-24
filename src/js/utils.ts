@@ -119,7 +119,7 @@ export const getSlug = (areaId: string, isLeaf: boolean): string => {
   return `/${type}/${areaId}`
 }
 
-const debouncePromise = (fn: Function, time: number) => {
+const debouncePromise = (fn: Function, time: number = 1000) => {
   let timerId
 
   return async function debounced (...args) {
@@ -133,7 +133,7 @@ const debouncePromise = (fn: Function, time: number) => {
   }
 }
 
-export const debounced = debouncePromise(async (items) => await Promise.resolve(items), 1000)
+export const debounced = debouncePromise(async (items) => await Promise.resolve(items))
 
 export const throttleRequest = (func, wait) => {
   let lastTime = 0
