@@ -21,36 +21,44 @@ export const ClimbSearchByName = ({ isMobile = true, placeholder = 'Try \'Levita
   })
 
   return (
+
     <Autocomplete
       placeholder={placeholder}
       classNames={{ item: 'name-search-item', panel: 'name-search-panel' }}
-      getSources={async ({ query }) => {
-        const items: any = await debounced(typesenseSearch(query))
-        return [{
-          sourceId: 'climbs',
-          getItems: () => items.grouped_hits,
-          navigator: {
-            async navigate ({ itemUrl }) {
-              await router.push(itemUrl)
-            }
-          },
-          getItemUrl ({ item }) {
-            const { hits } = item
-            /* eslint-disable-next-line */
-            return hits.length > 0 ? `/climbs/${hits[0].document.climbId}` : ''
-          },
-          templates: {
-            noResults () {
-              return 'No results.'
+      getSources={ ({ query }) => {
+        return debounced([
+          {
+            sourceId: 'climbs',
+            getItems() {
+              return typesenseSearch(query)
+                .then(({grouped_hits}) => {
+                  return grouped_hits
+                })
+                .catch(() => { return [] });
             },
-            item ({ item }) {
-              return (
-                <SearchByNameTemplate router={router} groupKey={item.group_key[0]} hits={item.hits} />
-              )
+            navigator: {
+              async navigate ({ itemUrl }) {
+                await router.push(itemUrl)
+              }
+            },
+            getItemUrl ({ item }) {
+              const { hits } = item
+              /* eslint-disable-next-line */
+              return hits.length > 0 ? `/climbs/${hits[0].document.climbId}` : ''
+            },
+            templates: {
+              noResults () {
+                return 'No results.'
+              },
+              item ({ item }) {
+                return (
+                  <SearchByNameTemplate router={router} groupKey={item.group_key[0]} hits={item.hits} />
+                )
+              }
             }
           }
-        }
-        ]
+        ])
+        
       }}
     />
   )
