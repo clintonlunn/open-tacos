@@ -21,24 +21,27 @@ const CragFinder = ({ isMobile = true, placeholder = 'Try \'Smith Rock\', \'Las 
   const router = useRouter()
   useEffect(() => {
     if (isMobile) return
-    // const inputs = document.getElementsByClassName('aa-Input')
-    // for (let i = 0; i < inputs.length; i++) {
-    //   (inputs[i] as HTMLElement).focus()
-    // }
+    const inputs = document.getElementsByClassName('aa-Input')
+    for (let i = 0; i < inputs.length; i++) {
+      (inputs[i] as HTMLElement).focus()
+    }
   })
   return (
     <Autocomplete
       id='crag-finder'
       classNames={{ item: 'crag-finder-item', panelLayout: 'crag-finder-panelLayout' }}
       placeholder={placeholder}
-      getSources={async ({ query }) => {
+      getSources={({ query }) => {
         if ((query as string).length < 3) {
           return []
         }
-        const features = await debounced(geocoderLookup(query, SEARCH_OPTIONS))
-        return [{
+        const features = () => geocoderLookup(query, SEARCH_OPTIONS)
+        .then((items) => {
+          return items
+        })
+        return debounced([{
           sourceId: 'location',
-          getItems: () => features,
+          getItems: features,
           navigator: {
             async navigate ({ itemUrl }) {
               await router.push(itemUrl)
@@ -61,7 +64,7 @@ const CragFinder = ({ isMobile = true, placeholder = 'Try \'Smith Rock\', \'Las 
             }
           }
         }
-        ]
+        ])
       }}
     />
   )
