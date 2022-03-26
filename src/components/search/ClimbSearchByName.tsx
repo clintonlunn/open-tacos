@@ -21,17 +21,16 @@ export const ClimbSearchByName = ({ isMobile = true, placeholder = 'Try \'Levita
     <Autocomplete
       placeholder={placeholder}
       classNames={{ item: 'name-search-item', panel: 'name-search-panel' }}
-      getSources={async ({ query }) => {
-        return await debounced([
+      getSources={({ query }) => {
+        const search = typesenseSearch(query)
+          .then(({ grouped_hits: groupedHits }) => {
+            return groupedHits
+          })
+          .catch(() => { return [] })
+        return debounced([
           {
             sourceId: 'climbs',
-            async getItems () {
-              return await typesenseSearch(query)
-                .then(({ grouped_hits: groupedHits }) => {
-                  return groupedHits
-                })
-                .catch(() => { return [] })
-            },
+            getItems: search,
             navigator: {
               async navigate ({ itemUrl }) {
                 await router.push(itemUrl)
